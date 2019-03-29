@@ -1,0 +1,10 @@
+#seed=4 for mt19937_64 Generator is used
+#ix   iy    Dis[ix,iy]
+0  0  0
+
+0  1  -0
+
+0  2  0
+
+0  3  -0
+
