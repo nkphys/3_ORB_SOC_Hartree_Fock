@@ -65,11 +65,12 @@ double Hamiltonian::chemicalpotential(double muin,double Particles){
     double n1,N;
     double dMubydN;
     double nstate = eigs_.size();
-    dMubydN = 0.0000005*(eigs_[nstate-1] - eigs_[0])/nstate;
+    dMubydN = 0.0005*(eigs_[nstate-1] - eigs_[0])/nstate;
     N=Particles;
     //temp=Parameters_.temp;
     mu_out = muin;
     bool converged=false;
+    int final_i;
 
 
     if(1==1){
@@ -82,6 +83,7 @@ double Hamiltonian::chemicalpotential(double muin,double Particles){
             if(abs(N-n1)<double(0.0001)){
                 //cout<<abs(N-n1)<<endl;
                 converged=true;
+                final_i=i;
                 break;
             }
             else {
@@ -95,7 +97,7 @@ double Hamiltonian::chemicalpotential(double muin,double Particles){
             cout<<"mu_not_converged, N = "<<n1<<endl;
         }
         else{
-            cout<<"mu converged, N = "<<n1<<endl;
+            cout<<"mu converged, N = "<<n1<<" in "<<final_i<<" iters"<<endl;
         }
 
     }
@@ -1144,7 +1146,7 @@ void Hamiltonian::HTBCreate(){
     complex<double> phasex, phasey;
     int l,m,a,b;
     complex<double> Boundary_val;
-    string boundary_cond="PBC";
+    string boundary_cond="OBC";
 
     if(boundary_cond=="OBC"){
         Boundary_val=zero_complex;

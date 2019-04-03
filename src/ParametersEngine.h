@@ -250,7 +250,7 @@ void Parameters::Initialize(string inputfile_){
     pi=4.00*atan(double(1.0));
     Eav=0.0;
 
-    Temperature=0.01;
+    Temperature=0.0001;
     beta=(11605.0/Temperature);
 
     mus=0.25;

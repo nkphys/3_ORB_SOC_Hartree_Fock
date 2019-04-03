@@ -42,6 +42,7 @@ public:
     void Calculate_Order_Params();
     void Get_OrderParameters_diffs();
     void Update_OrderParameters(int iter);
+    void Update_OrderParameters_Modified_Broyden_in_ComplexSpace(int iter);
 
     double Omega(int i);
 
@@ -76,6 +77,15 @@ public:
     vector<double> Delta_x_n; //Delta_x_n= x_n_in - x_nm1_in;
     Mat_2_doub Jinv_n;
     Mat_2_doub Jinv_np1;
+
+
+    //Declarations for Modified Broyden Method in Complex Space
+    Mat_2_Complex_doub _Delta_F;
+    Mat_2_Complex_doub _u;
+    Mat_1_Complex_doub _Delta_n;
+    Mat_2_Complex_doub _A;
+
+
 
 
 };
@@ -184,7 +194,7 @@ void Observables::Update_OrderParameters(int iter){
                     }
                 }
             }
-            F_n[ns_*72]=(Parameters_.mus - Parameters_.mu_old);
+            F_n[ns_*72]=(Parameters_.mus - Parameters_.mu_old)*1.0;
 
             for(int i=0;i<(2*6*6*ns_)+1;i++){
                 Delta_x_n[i] =0.0;
@@ -202,7 +212,7 @@ void Observables::Update_OrderParameters(int iter){
                         for(int state_j=0;state_j<6;state_j++){
                             temp_comp.real(Delta_x_n[site*36 + state_i*6 + state_j]);
                             temp_comp.imag(Delta_x_n[36*ns_ + site*36 + state_i*6 + state_j]);
-                            MFParams_.OParams[site][state_i][state_j] +=temp_comp;
+                            MFParams_.OParams[site][state_i][state_j] +=(one_complex)*temp_comp;
 
                         }
                     }
@@ -236,7 +246,7 @@ void Observables::Update_OrderParameters(int iter){
                     }
                 }
             }
-            F_n[ns_*72]=Parameters_.mus - Parameters_.mu_old;
+            F_n[ns_*72]=(Parameters_.mus - Parameters_.mu_old)*1.0;
 
             //Get DeltaF_n
             for (int i=0;i<(2*6*6*ns_)+1;i++){
@@ -302,7 +312,7 @@ void Observables::Update_OrderParameters(int iter){
             for(int i=0;i<2*6*6*ns_ + 1;i++){
                 Delta_x_n[i] =0.0;
                 for(int j=0;j<2*6*6*ns_ + 1;j++){
-                    Delta_x_n[i] +=  -1.0*Jinv_np1[i][j]*F_n[j];
+                    Delta_x_n[i] +=  -1.0*Jinv_np1[i][j]*F_n[j]; //HERE
                 }
             }
 
@@ -315,7 +325,7 @@ void Observables::Update_OrderParameters(int iter){
                         for(int state_j=0;state_j<6;state_j++){
                             temp_comp.real(Delta_x_n[site*36 + state_i*6 + state_j]);
                             temp_comp.imag(Delta_x_n[36*ns_ + site*36 + state_i*6 + state_j]);
-                            MFParams_.OParams[site][state_i][state_j] +=temp_comp;
+                            MFParams_.OParams[site][state_i][state_j] +=(one_complex)*(temp_comp);
 
                         }
                     }
@@ -388,6 +398,22 @@ void Observables::Update_OrderParameters(int iter){
 
 
     }
+
+
+}
+
+
+
+void Update_OrderParameters_Modified_Broyden_in_ComplexSpace(int iter){
+
+//Modified Broyden is used from "D. D. Johnson, Phys. Rev. B 38, 12807, 1988".
+//Look into this "https://arxiv.org/pdf/0805.4446.pdf" as well.
+//Please note the m=iter+1, because m starts from "1".
+
+
+
+
+
 
 
 }
@@ -1503,6 +1529,8 @@ void Observables::Initialize(){
     Delta_x_n.resize(ns_*6*6*2 + 1); //Delta_x_n= x_n_in - x_nm1_in;
     Jinv_n.resize(ns_*6*6*2 + 1);
     Jinv_np1.resize(ns_*6*6*2 + 1);
+
+
 
     for(int i=0;i<ns_*6*6*2 + 1;i++){
         Jinv_n[i]. resize(ns_*6*6*2 + 1);
